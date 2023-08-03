@@ -4,9 +4,9 @@ import { connect } from 'cloudflare:sockets';
 
 // How to generate your own UUID:
 // [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
-let userID = 'd342d11e-d424-4583-b36e-524ab1f0afa4';
+let userID = 'be47b344-df29-49c0-a01c-fd3f7f4337c8';
 
-const proxyIPs = ['cdn-all.xn--b6gac.eu.org', 'cdn.xn--b6gac.eu.org', 'cdn-b100.xn--b6gac.eu.org', 'edgetunnel.anycast.eu.org', 'cdn.anycast.eu.org'];
+const proxyIPs = ['cdn-all.xn--b6gac.eu.org'， 'cdn.xn--b6gac.eu.org'， 'cdn-b100.xn--b6gac.eu.org'， 'edgetunnel.anycast.eu.org'， 'cdn.anycast.eu.org'];
 let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 
 let dohURL = 'https://sky.rethinkdns.com/1:-Pf_____9_8A_AMAIgE8kMABVDDmKOHTAKg='; // https://cloudflare-dns.com/dns-query or https://dns.google/dns-query
@@ -22,14 +22,14 @@ if (!isValidUUID(userID)) {
     throw new Error('uuid is not valid');
 }
 
-export default {
+export 默认 {
     /**
      * @param {import("@cloudflare/workers-types").Request} request
      * @param {{UUID: string, PROXYIP: string, DNS_RESOLVER_URL: string, NODE_ID: int, API_HOST: string, API_TOKEN: string}} env
      * @param {import("@cloudflare/workers-types").ExecutionContext} ctx
      * @returns {Promise<Response>}
      */
-    async fetch(request, env, ctx) {
+    async fetch(request， env， ctx) {
         try {
             userID = env.UUID || userID;
             proxyIP = env.PROXYIP || proxyIP;
@@ -37,31 +37,31 @@ export default {
             nodeId = env.NODE_ID || nodeId;
             apiToken = env.API_TOKEN || apiToken;
             apiHost = env.API_HOST || apiHost;
-            const upgradeHeader = request.headers.get('Upgrade');
+            const upgradeHeader = request.headers。get('Upgrade');
             if (!upgradeHeader || upgradeHeader !== 'websocket') {
                 const url = new URL(request.url);
                 switch (url.pathname) {
                     case '/cf':
-                        return new Response(JSON.stringify(request.cf, null, 4), {
-                            status: 200,
+                        return new Response(JSON.stringify(request.cf， null， 4)， {
+                            status: 200，
                             headers: {
-                                "Content-Type": "application/json;charset=utf-8",
-                            },
+                                "Content-Type": "application/json;charset=utf-8"，
+                            }，
                         });
                     case '/connect': // for test connect to cf socket
-                        const [hostname, port] = ['cloudflare.com', '80'];
+                        const [hostname， port] = ['cloudflare.com'， '80'];
                         console.log(`Connecting to ${hostname}:${port}...`);
 
                         try {
                             const socket = await connect({
                                 hostname: hostname,
-                                port: parseInt(port, 10),
+                                port: parseInt(port, 10)，
                             });
 
-                            const writer = socket.writable.getWriter();
+                            const writer = socket.writable。getWriter();
 
                             try {
-                                await writer.write(new TextEncoder().encode('GET / HTTP/1.1\r\nHost: ' + hostname + '\r\n\r\n'));
+                                await writer.write(new TextEncoder()。encode('GET / HTTP/1.1\r\nHost: ' + hostname + '\r\n\r\n'));
                             } catch (writeError) {
                                 writer.releaseLock();
                                 await socket.close();
